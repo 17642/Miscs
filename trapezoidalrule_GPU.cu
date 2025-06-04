@@ -1,4 +1,5 @@
-//%%cuda -c "--gpu-architecture sm_75 -Xcompiler=-fopenmp"
+#%%writefile ks.cpp
+%%cuda -c "--gpu-architecture sm_75 -Xcompiler=-fopenmp"
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include <stdio.h>
@@ -15,6 +16,7 @@ using namespace std;
 
 #define USE_ATOMIC_SUM
 //#define USE_CPU_REDUCTION
+//#define USE_GPU_GLOBAL_REDUCTION
 //#define USE_GPU_SHARED_REDUCTION
 
 #define NUM_THREADS 1024
@@ -170,22 +172,22 @@ float Target_Function2(float x){
   return TFUNCTION(x);
 }
 float calcByCPU(float start, float end, int cuts){
-    float step = (end-start)/cuts;
+    double step = (end-start)/cuts;
 
-    float sum = 0;
+    double sum = 0;
 
     #pragma omp parallel for reduction(+:sum)
     for (int i = 0; i < cuts; i++) {
-        float x = start + i * step;
+        double x = start + i * step;
         sum += (Target_Function2(x) + Target_Function2(x + step)) * step / 2;
     }
-    return sum;
+    return (float)sum;
 }
 
 int main(int argc, char* argv[]) {
     float start = 0.0f;
     float end = 100.0f;
-    int cuts = 2048000000;
+    int cuts = 819200000;
              //2147483647
 
     // CPU 시간 측정

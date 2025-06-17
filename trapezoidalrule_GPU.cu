@@ -1,5 +1,3 @@
-#%%writefile ks.cpp
-%%cuda -c "--gpu-architecture sm_75 -Xcompiler=-fopenmp"
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include <stdio.h>

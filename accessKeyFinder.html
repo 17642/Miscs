@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Key Finder</title>
+    <style>
+        textarea{
+            font-family: 'Consolas', 'Courier New', 'Courier',  monospace;
+        }
+    </style>
+</head>
+</html>
+<body>
+    <h1>Access Key Finder</h1>
+    <p>access key:</p>
+    <textarea id="accessKeyInput" rows = "1" cols="80 "placeholder="Enter your access key here..."></textarea>
+    <br>
+    <p>secret access key:</p>
+    <textarea id="SecretaccessKeyInput" rows = "1" cols="80" placeholder="Enter your Secret access key here..."></textarea>
+    <br><br><button onclick="autoFind()">Find Key</button>&lt-Maybe it'll find an access key for you. I'm not sure if it's accurate, so be careful.<br><br>
+    <textarea id="codeinput" rows="20" cols="80" placeholder="Enter your code here..."></textarea>
+    <br><br><button onclick="sanitizeCode()">Convert!</button>  <button onclick="copyCode()">copy result</button> <button onclick="sorry()">GET MY UI</button><br><br>
+    <textarea id="result" rows="20" cols="80" placeholder="Results will appear here..." readonly></textarea>
+    <script>
+        function sanitizeCode(){
+            const input = document.getElementById("codeinput");
+            const output = document.getElementById("result");
+
+            let accessKey = document.getElementById("accessKeyInput").value;
+            let secretAccessKey = document.getElementById("SecretaccessKeyInput").value;
+
+            if (!accessKey || !secretAccessKey) {
+                alert("Please enter both Access Key and Secret Access Key.");
+                return;
+            }
+
+            let inputs = input.value;
+            inputs = inputs.replaceAll(accessKey, "access-key" ).replaceAll(secretAccessKey, "secret-access-key");
+            output.value = inputs;
+        }
+
+        function copyCode() {
+            const result = document.getElementById("result");
+            result.select();
+            document.execCommand("copy");
+        }
+
+        function autoFind(){
+            const accessKeyInput = document.getElementById("accessKeyInput");
+            const secretAccessKeyInput = document.getElementById("SecretaccessKeyInput");
+            const codeInput = document.getElementById("codeinput");
+
+            let code = codeInput.value;
+            if (!code) {
+                alert("Please enter the code to find the access key.");
+                return;
+            }
+            let accessKey = code.match(/(AKIA|ASIA)[0-9A-Z]{16}/);
+            let secretAccessKey = code.match(/[0-9a-zA-Z/+=]{40}/);
+            if(!accessKey && !secretAccessKey) {
+                alert("No access key or secret access key found in the code.");
+                return;
+            }
+
+            if(accessKey){
+                accessKeyInput.value = accessKey[0];
+            }else{
+                alert("No access key found in the code.");
+            }
+            
+            if(secretAccessKey){
+                secretAccessKeyInput.value = secretAccessKey[0];
+            }else{
+                alert("No secret access key found in the code.");
+            }
+
+            alert("Access Key and Secret Access Key have been found and filled in. Please check the input fields.");
+
+        }
+
+        function sorry(){
+            alert("Sorry, I tried.");
+            console.log("Well.. I think this is much cooler than some other UIs.");
+        }
+    </script>
+</body>
